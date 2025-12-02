@@ -6,10 +6,16 @@ require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://b2w-six.vercel.app/", 
+    ],
+  })
+);
 
-app.use(cors());
 app.use(express.json());
-
 
 const rankVideos = (videos, originalQuery) => {
   const keywords = originalQuery.toLowerCase().split(" ");
@@ -42,22 +48,18 @@ const rankVideos = (videos, originalQuery) => {
       const desc = (video.snippet.description || "").toLowerCase();
       const fullText = `${title} ${desc}`;
 
-      
       keywords.forEach((word) => {
         if (fullText.includes(word) && word.length > 2) score += 5;
       });
 
-      
       Object.keys(POSITIVE_WEIGHTS).forEach((term) => {
         if (title.includes(term)) score += POSITIVE_WEIGHTS[term];
       });
 
-      
       Object.keys(NEGATIVE_WEIGHTS).forEach((term) => {
         if (title.includes(term)) score += NEGATIVE_WEIGHTS[term];
       });
 
-     
       const matches = keywords.filter(
         (k) => fullText.includes(k) && k.length > 2
       );
@@ -69,8 +71,8 @@ const rankVideos = (videos, originalQuery) => {
 
       return { ...video, b2wScore: score, reason };
     })
-    .filter((v) => v.b2wScore > -5) 
-    .sort((a, b) => b.b2wScore - a.b2wScore); 
+    .filter((v) => v.b2wScore > -5)
+    .sort((a, b) => b.b2wScore - a.b2wScore);
 };
 
 // --- API ENDPOINT ---
@@ -84,10 +86,8 @@ app.post("/api/recommend", async (req, res) => {
 
     console.log(`[Search] Query: ${query}`);
 
-    
     const searchTerms = `${query} commercial ad reference 4k`;
 
-    
     const youtubeResponse = await axios.get(
       "https://www.googleapis.com/youtube/v3/search",
       {
@@ -99,23 +99,19 @@ app.post("/api/recommend", async (req, res) => {
           videoEmbeddable: "true",
           key: process.env.YOUTUBE_API_KEY,
         },
-        // 
+        //
         headers: {
-         
           Referer: "http://localhost:5000",
         },
       }
     );
 
-  
-
     const rawVideos = youtubeResponse.data.items || [];
     const rankedVideos = rankVideos(rawVideos, query);
 
-   
     res.json({
       count: rankedVideos.length,
-      results: rankedVideos.slice(0, 9), 
+      results: rankedVideos.slice(0, 9),
     });
   } catch (error) {
     console.error(
