@@ -1,0 +1,23 @@
+# --- Dependencies ---
+node_modules
+server/node_modules
+
+# --- Security (CRITICAL) ---
+.env
+.env.local
+.env.production
+**/.DS_Store
+
+# --- Build Outputs ---
+dist
+build
+.vercel
+
+# --- System Files ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
