@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 
-const BACKEND_URL = "http://localhost:5000/api/recommend";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/api/recommend";
 
 export default function App() {
   const [query, setQuery] = useState("");
