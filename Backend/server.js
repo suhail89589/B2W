@@ -10,7 +10,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://b2w-six.vercel.app/", 
+      "https://b2w-six.vercel.app", 
     ],
   })
 );
